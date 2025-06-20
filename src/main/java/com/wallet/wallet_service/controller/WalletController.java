@@ -2,6 +2,7 @@ package com.wallet.wallet_service.controller;
 
 import com.wallet.wallet_service.dto.AccountRequest;
 import com.wallet.wallet_service.dto.AccountResponse;
+import com.wallet.wallet_service.dto.ApiResponse;
 import com.wallet.wallet_service.service.WalletService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -18,14 +19,16 @@ public class WalletController {
     }
 
     @PostMapping
-    public AccountResponse createWallet(@Valid @RequestBody AccountRequest request){
+    public ApiResponse<AccountResponse> createWallet(@Valid @RequestBody AccountRequest request) {
         log.info("Creating account with details: {}", request.toString());
-        return walletService.createAccount(request);
+        AccountResponse res = walletService.createAccount(request);
+        return ApiResponse.success(res);
     }
 
     @GetMapping("/{userId}/balance")
-    public double getBalance(@PathVariable String userId){
+    public ApiResponse<Double> getBalance(@PathVariable String userId) {
         log.info("/{}/balance route invoked", userId);
-        return walletService.getBalance(userId);
+        double balance = walletService.getBalance(userId);
+        return ApiResponse.success(balance);
     }
 }

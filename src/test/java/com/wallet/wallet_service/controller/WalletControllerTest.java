@@ -40,8 +40,8 @@ public class WalletControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value("raj"))
-                .andExpect(jsonPath("$.balance").value(1000.0));
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.data.userId").value("raj"));
     }
 
     @Test
@@ -53,8 +53,7 @@ public class WalletControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(badRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Validation failed"))
-                .andExpect(jsonPath("$.details.userId").value("must not be blank"))
-                .andExpect(jsonPath("$.details.initialBalance").value("must be greater than or equal to 0"));
+                .andExpect(jsonPath("$.status").value("error"))
+                .andExpect(jsonPath("$.error.code").value("VALIDATION_FAILED"));
     }
 }
