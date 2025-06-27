@@ -20,7 +20,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleValidationErrors(MethodArgumentNotValidException ex) {
-
         Map<String, String> details = ex.getBindingResult()
                 .getFieldErrors().stream()
                 .collect(Collectors.toMap(FieldError::getField,
@@ -34,6 +33,11 @@ public class GlobalExceptionHandler {
         log.error("Unexpected error: ", ex);
         ApiResponse<?> body = ApiResponse.error("INTERNAL_ERROR", "Something went wrong");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
+    }
+
+    public ResponseEntity<ApiResponse<?>> handleIllegalArg(Exception ex) {
+        ApiResponse<?> body = ApiResponse.error("BUSINESS_ERROR", ex.getMessage());
+        return ResponseEntity.badRequest().body(body);
     }
 
 }

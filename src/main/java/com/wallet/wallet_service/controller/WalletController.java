@@ -1,5 +1,6 @@
 package com.wallet.wallet_service.controller;
 
+import com.wallet.wallet_service.dto.AccountOperationRequest;
 import com.wallet.wallet_service.dto.AccountRequest;
 import com.wallet.wallet_service.dto.AccountResponse;
 import com.wallet.wallet_service.dto.ApiResponse;
@@ -37,5 +38,17 @@ public class WalletController {
         log.info("/{}/balance route invoked", userId);
         double balance = walletService.getBalance(userId);
         return ApiResponse.success(balance);
+    }
+
+    @Operation(summary = "Credit funds to wallet")
+    @PostMapping("/credit")
+    public ApiResponse<AccountResponse> credit(@Valid @RequestBody AccountOperationRequest request){
+        return ApiResponse.success(walletService.credit(request.userId(), request.amount()));
+    }
+
+    @Operation(summary = "Debit funds from wallet")
+    @PostMapping("/debit")
+    public ApiResponse<AccountResponse> debit(@Valid @RequestBody AccountOperationRequest request){
+        return ApiResponse.success(walletService.debit(request.userId(), request.amount()));
     }
 }
