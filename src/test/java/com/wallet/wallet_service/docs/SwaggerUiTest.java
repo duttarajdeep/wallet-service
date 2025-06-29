@@ -1,5 +1,6 @@
 package com.wallet.wallet_service.docs;
 
+import com.wallet.wallet_service.common.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class SwaggerUiTest {
+public class SwaggerUiTest extends AbstractIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 

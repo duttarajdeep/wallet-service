@@ -24,7 +24,7 @@ public class WalletController {
 
     @Operation(summary = "Create a new wallet", description = "Creates a new wallet account with an initial balance.")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Wallet created successfully")
-    @PostMapping
+    @PostMapping("/create")
     public ApiResponse<AccountResponse> createWallet(@Valid @RequestBody AccountRequest request) {
         log.info("Creating account with details: {}", request.toString());
         AccountResponse res = walletService.createAccount(request);

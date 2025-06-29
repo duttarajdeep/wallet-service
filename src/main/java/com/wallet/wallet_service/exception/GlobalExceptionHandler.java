@@ -29,6 +29,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
+    @ExceptionHandler(WalletNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleWalletNotFound(WalletNotFoundException ex){
+        ApiResponse<?> body = ApiResponse.error("WALLET_NOT_FOUND", ex.getMessage());
+        return ResponseEntity.badRequest().body(body);
+    }
+
+    @ExceptionHandler(InsufficientBalanceException.class)
+    public ResponseEntity<ApiResponse<?>> handleInsufficientBalance(InsufficientBalanceException ex){
+        ApiResponse<?> body = ApiResponse.error("INSUFFICIENT_BALANCE", ex.getMessage());
+        return ResponseEntity.badRequest().body(body);
+    }
+
     public ResponseEntity<ApiResponse<?>> handleGeneric(Exception ex) {
         log.error("Unexpected error: ", ex);
         ApiResponse<?> body = ApiResponse.error("INTERNAL_ERROR", "Something went wrong");

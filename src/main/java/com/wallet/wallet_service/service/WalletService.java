@@ -2,37 +2,54 @@ package com.wallet.wallet_service.service;
 
 import com.wallet.wallet_service.dto.AccountRequest;
 import com.wallet.wallet_service.dto.AccountResponse;
+import com.wallet.wallet_service.entity.Wallet;
+import com.wallet.wallet_service.exception.InsufficientBalanceException;
+import com.wallet.wallet_service.exception.WalletNotFoundException;
+import com.wallet.wallet_service.repository.WalletRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class WalletService {
-    private final ConcurrentHashMap<String, Double> walletStore = new ConcurrentHashMap<>();
+    private final WalletRepository walletRepository;
+
+    public WalletService(WalletRepository walletRepository) {
+        this.walletRepository = walletRepository;
+    }
 
     public AccountResponse createAccount(AccountRequest accountRequest) {
-        walletStore.put(accountRequest.userId(), accountRequest.initialBalance());
+        if (walletRepository.existsById(accountRequest.userId()))
+            throw new IllegalArgumentException("Wallet for this user already exists");
+
+        Wallet wallet = new Wallet(accountRequest.userId(), accountRequest.initialBalance());
+        walletRepository.save(wallet);
         return new AccountResponse(accountRequest.userId(), accountRequest.initialBalance());
     }
 
     public double getBalance(String userId) {
-        return walletStore.getOrDefault(userId, 0.0);
+        Wallet wallet = walletRepository.findById(userId).orElseThrow(() -> new WalletNotFoundException(userId));
+        return wallet.getBalance();
     }
 
+    @Transactional
     public AccountResponse credit(String userId, double amount) {
-        double currentBalance = walletStore.getOrDefault(userId, 0.0);
-        double newBalance = currentBalance + amount;
-        walletStore.put(userId, newBalance);
+        Wallet wallet = walletRepository.findById(userId).orElseThrow(() -> new WalletNotFoundException(userId));
+        double newBalance = wallet.getBalance() + amount;
+        wallet.setBalance(newBalance);
+        walletRepository.save(wallet);
         return new AccountResponse(userId, newBalance);
     }
 
+    @Transactional
     public AccountResponse debit(String userId, double amount) {
-        double current = walletStore.get(userId);
+        Wallet wallet = walletRepository.findById(userId).orElseThrow(() -> new WalletNotFoundException(userId));
+        double current = wallet.getBalance();
         if (amount > current) {
-            throw new IllegalArgumentException("Debit amount can not be greater than balance");
+            throw new InsufficientBalanceException(userId, amount, wallet.getBalance());
         }
         double updated = current - amount;
-        walletStore.put(userId, updated);
+        wallet.setBalance(updated);
+        walletRepository.save(wallet);
         return new AccountResponse(userId, updated);
     }
 }

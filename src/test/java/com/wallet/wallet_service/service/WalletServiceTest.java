@@ -1,14 +1,36 @@
 package com.wallet.wallet_service.service;
 
+import com.wallet.wallet_service.common.AbstractIntegrationTest;
 import com.wallet.wallet_service.dto.AccountRequest;
 import com.wallet.wallet_service.dto.AccountResponse;
+import com.wallet.wallet_service.repository.WalletRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class WalletServiceTest {
+@SpringBootTest
+@Testcontainers
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+public class WalletServiceTest extends AbstractIntegrationTest {
+    @Autowired
+    private WalletRepository walletRepository;
 
-    private final WalletService walletService = new WalletService();
+    @Autowired
+    private WalletService walletService;
+
+    @BeforeEach
+    void clearDb(){
+        walletRepository.deleteAll();
+    }
 
     @Test
     void createAccountAndRetrieveBalance() {
