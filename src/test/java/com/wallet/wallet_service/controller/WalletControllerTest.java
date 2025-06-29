@@ -28,7 +28,7 @@ public class WalletControllerTest {
     private WalletService walletService;
 
     @Test
-    @DisplayName("POST /api/wallet return 200 and JSON body when input is valid")
+    @DisplayName("POST /api/wallet/create return 200 and JSON body when input is valid")
     void shouldCreateWallet() throws Exception {
         AccountRequest request = new AccountRequest("raj", 1000.0);
         AccountResponse response = new AccountResponse("raj", 1000.0);
@@ -36,7 +36,7 @@ public class WalletControllerTest {
         when(walletService.createAccount(request)).thenReturn(response);
 
         mockMvc.perform(
-                        post("/api/wallet")
+                        post("/api/wallet/create")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -45,11 +45,11 @@ public class WalletControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/wallet returns 400 with validation details on bad input")
+    @DisplayName("POST /api/wallet/create returns 400 with validation details on bad input")
     void shouldFailValidation() throws Exception {
         AccountRequest badRequest = new AccountRequest("", -10.0);
         mockMvc.perform(
-                post("/api/wallet")
+                post("/api/wallet/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(badRequest)))
                 .andExpect(status().isBadRequest())

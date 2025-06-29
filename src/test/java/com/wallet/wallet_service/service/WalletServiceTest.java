@@ -3,6 +3,7 @@ package com.wallet.wallet_service.service;
 import com.wallet.wallet_service.common.AbstractIntegrationTest;
 import com.wallet.wallet_service.dto.AccountRequest;
 import com.wallet.wallet_service.dto.AccountResponse;
+import com.wallet.wallet_service.exception.InsufficientBalanceException;
 import com.wallet.wallet_service.repository.WalletRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,7 @@ public class WalletServiceTest extends AbstractIntegrationTest {
     @Test
     void debit_shouldFailOnInsufficientBalance() {
         walletService.createAccount(new AccountRequest("rajdeep", 1000));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InsufficientBalanceException.class,
                 () -> walletService.debit("rajdeep", 5000));
     }
 }
