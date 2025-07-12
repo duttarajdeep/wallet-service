@@ -10,6 +10,17 @@ jobs:
   build-and-export-spec:
     runs-on: ubuntu-latest
 
+    services:
+      docker:
+        image: docker:24.0.7-dind
+        options: --privileged
+        ports:
+          - 5432:5432
+
+    env:
+      DOCKER_HOST: tcp://localhost:2375
+      TESTCONTAINERS_RYUK_DISABLED: true
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,6 +30,9 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+
+      - name: Grant permission to Gradle wrapper
+        run: chmod +x ./gradlew
 
       - name: Build and Test
         run: ./gradlew clean test bootJar
