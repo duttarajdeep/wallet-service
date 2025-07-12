@@ -39,7 +39,7 @@ jobs:
 
       - name: Run app and extract OpenAPI spec
         run: |
-          java -jar build/libs/*.jar &
+          java -Dspring.profiles.active=dev -jar build/libs/*.jar &
           APP_PID=$!
           echo "Waiting for app startup..."
           sleep 15
