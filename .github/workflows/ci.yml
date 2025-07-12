@@ -11,15 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      docker:
-        image: docker:24.0.7-dind
-        options: --privileged
+      postgres:
+        image: postgres:16
         ports:
           - 5432:5432
+        env:
+          POSTGRES_DB: walletdb
+          POSTGRES_USER: walletuser
+          POSTGRES_PASSWORD: walletpass
 
     env:
-      DOCKER_HOST: tcp://localhost:2375
-      TESTCONTAINERS_RYUK_DISABLED: true
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/walletdb
+      SPRING_DATASOURCE_USERNAME: walletuser
+      SPRING_DATASOURCE_PASSWORD: walletpass
 
     steps:
       - name: Checkout code
@@ -38,11 +43,6 @@ jobs:
         run: ./gradlew clean test bootJar
 
       - name: Run app and extract OpenAPI spec
-        env:
-          SPRING_PROFILES_ACTIVE: dev
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/walletdb
-          SPRING_DATASOURCE_USERNAME: walletuser
-          SPRING_DATASOURCE_PASSWORD: walletpass
         run: |
           java -jar build/libs/*.jar &
           APP_PID=$!
