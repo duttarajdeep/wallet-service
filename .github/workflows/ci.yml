@@ -38,8 +38,13 @@ jobs:
         run: ./gradlew clean test bootJar
 
       - name: Run app and extract OpenAPI spec
+        env:
+          SPRING_PROFILES_ACTIVE: dev
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/walletdb
+          SPRING_DATASOURCE_USERNAME: walletuser
+          SPRING_DATASOURCE_PASSWORD: walletpass
         run: |
-          java -Dspring.profiles.active=dev -jar build/libs/*.jar &
+          java -jar build/libs/*.jar &
           APP_PID=$!
           echo "Waiting for app startup..."
           sleep 15
