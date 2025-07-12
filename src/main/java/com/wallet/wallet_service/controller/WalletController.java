@@ -22,7 +22,7 @@ public class WalletController {
         this.walletService = walletService;
     }
 
-    @Operation(summary = "Create a new wallet", description = "Creates a new wallet account with an initial balance.")
+    @Operation(summary = "Create a new wallet", description = "Creates new wallet account with an initial balance.")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Wallet created successfully")
     @PostMapping("/create")
     public ApiResponse<AccountResponse> createWallet(@Valid @RequestBody AccountRequest request) {
